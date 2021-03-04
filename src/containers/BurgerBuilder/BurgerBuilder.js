@@ -83,7 +83,6 @@ class BurgerBuilder extends Component {
         for(let ingredient in disabledInfo){
             disabledInfo[ingredient] = disabledInfo[ingredient]<=0;
         }
-        console.log(disabledInfo);
         return(
             <Aux>
                 <Modal show={this.state.purchasing} closed={this.orderCancelled}>

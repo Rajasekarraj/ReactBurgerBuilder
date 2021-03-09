@@ -4,6 +4,8 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import axios from '../../axios-orders';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -15,15 +17,17 @@ const INGREDIENT_PRICES = {
 class BurgerBuilder extends Component {
 
     state = {
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0
-        },
+        ingredients: null,
         finalPrice: 4,
         purchasable: false,
-        purchasing: false
+        purchasing: false,
+        spinner: false
+    }
+
+    componentDidMount() {
+        axios.get('https://react-burger-app-12166-default-rtdb.firebaseio.com/ingredients.json')
+             .then(response => this.setState({ingredients: response.data}))
+             .catch(error => console.log('Error while fetching ingredients'));
     }
 
     updatePurchaseState(ingredients) {
@@ -75,7 +79,30 @@ class BurgerBuilder extends Component {
     }
 
     orderPlaced = () => {
-        alert('Order Placed, Thank You!')
+        // alert('Order Placed, Thank You!')
+        this.setState({spinner: true});
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.finalPrice,
+            customer: {
+                name: 'Rajasekar',
+                email: 'testemail@123.com',
+                address: {
+                    streetName: '21/4,Nehru St',
+                    city: 'Chennai',
+                    zipCode: '321903'
+                }
+            }
+        }
+        axios.post('/orders.json', order)
+            .then(response => {
+                console.log(response);
+                this.setState({spinner: false, purchasing: false});
+            })
+            .catch(error => {
+                console.log(error)
+                this.setState({spinner: false, purchasing: false});
+            })
     }
 
     render() {
@@ -83,22 +110,35 @@ class BurgerBuilder extends Component {
         for(let ingredient in disabledInfo){
             disabledInfo[ingredient] = disabledInfo[ingredient]<=0;
         }
+        let orderSummary = null;
+        let burger = null;
+        if(this.state.ingredients){
+            burger = (
+                <Aux>
+                    <Burger ingredients = {this.state.ingredients}/>
+                    <BuildControls ingredientAdded = {this.addIngredientHandler}
+                    ingredientRemoved = {this.deleteIngredientHandler}
+                    disabled = {disabledInfo}
+                    price = {this.state.finalPrice}
+                    purchasable = {this.state.purchasable}
+                    ordered = {this.orderNowClicked}/>
+                </Aux>
+            )
+            orderSummary = <OrderSummary
+                            ingredients = {this.state.ingredients}
+                            orderCancelHandler = {this.orderCancelled}
+                            orderContinueHandler = {this.orderPlaced}
+                            finalPrice = {this.state.finalPrice}/>;
+        }
+        if(this.state.spinner){
+            orderSummary = <Spinner />
+        }
         return(
             <Aux>
                 <Modal show={this.state.purchasing} closed={this.orderCancelled}>
-                    <OrderSummary
-                     ingredients = {this.state.ingredients}
-                     orderCancelHandler = {this.orderCancelled}
-                     orderContinueHandler = {this.orderPlaced}
-                     finalPrice = {this.state.finalPrice}/>
+                    {orderSummary}
                 </Modal>
-                <Burger ingredients = {this.state.ingredients}/>
-                <BuildControls ingredientAdded = {this.addIngredientHandler}
-                 ingredientRemoved = {this.deleteIngredientHandler}
-                 disabled = {disabledInfo}
-                 price = {this.state.finalPrice}
-                 purchasable = {this.state.purchasable}
-                 ordered = {this.orderNowClicked}/>
+                {burger}
             </Aux>
         );
     }

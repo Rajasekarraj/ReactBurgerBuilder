@@ -17,7 +17,7 @@ const order = (props) => {
             margin: '10px 8px',
             border: '1px solid #ccc',
             padding: '10px'
-        }}>{ingredient.name}  ({ingredient.count})</span>
+        }} key={ingredient.name}>{ingredient.name}  ({ingredient.count})</span>
     })
     return(
         <div className={classes.Order}>

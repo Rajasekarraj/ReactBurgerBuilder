@@ -1,42 +1,28 @@
 import React, { Component } from 'react';
 import classes from './Orders.css';
 import Order from '../../components/Order/Order';
-import axios from '../../axios-orders';
+import { connect } from 'react-redux';
+import * as actions from '../../store/actions/index';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 class Orders extends Component {
-
-    state = {
-        orders: [],
-        loading: true
-    }
-
+    
     componentDidMount() {
-        axios.get('/orders.json')
-            .then(res => {
-                const fetchedOrders = []
-                for(let key in res.data){
-                    fetchedOrders.push({
-                        ...res.data[key],
-                        id:key
-                    })
-                }
-                this.setState({orders: fetchedOrders, loading: false});
-                console.log(this.state.orders);
-            })
-            .catch(error => {
-                this.setState({loading: false});
-            });
+        this.props.getOrders();
     }
 
     render() {
         // let ingredients = this.state.orders.ingredients;
         // let price = this.state.orders.price;
-        const orders = this.state.orders.map(order => {
-            return <Order
-                key = {order.id}
-                ingredients = {order.ingredients}
-                price = {order.price} />
-        });
+        let orders = <Spinner />
+        if(!this.props.loader) {
+            orders = orders = this.props.orders.map(order => {
+                return <Order
+                    key = {order.id}
+                    ingredients = {order.ingredients}
+                    price = {order.price} />
+            });
+        }
         return(
             <div className={classes.Order}>
                 {orders}
@@ -45,4 +31,17 @@ class Orders extends Component {
     }
 }
 
-export default Orders;
+const mapStateToProps = state => {
+    return {
+        orders: state.order.orders,
+        loader: state.order.orderLoader
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        getOrders: () => dispatch(actions.getOrders())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Orders);

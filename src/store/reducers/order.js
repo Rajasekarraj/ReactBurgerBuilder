@@ -4,7 +4,7 @@ const initialState = {
     orders: [],
     spinner: false,
     purchased: false,
-    orderLoading: true
+    orderLoader: false
 }
 
 const reducer = (state = initialState, action) => {
@@ -36,7 +36,23 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 spinner: true
-            }   
+            }
+        case actionTypes.ORDER_FETCH_INIT:
+            return {
+                ...state,
+                orderLoader: true
+            }    
+        case actionTypes.ORDER_FETCH_SUCCESS:
+            return {
+                ...state,
+                orders: action.orders,
+                orderLoader: false
+            }
+        case actionTypes.ORDER_FETCH_FAILED:
+            return {
+                ...state,
+                orderLoader: false
+            }    
     }
     return state;
 }

@@ -5,7 +5,7 @@ import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import { connect } from 'react-redux';
-import * as actionTypes from '../../../store/actions';
+import * as action from '../../../store/actions/index';
 class ContactData extends Component {
 
     state = {
@@ -90,8 +90,7 @@ class ContactData extends Component {
                 valid: true
             }
         },
-        isFormValid: false,
-        spinner: false
+        isFormValid: false
     }
 
     componentDidMount() {
@@ -100,8 +99,6 @@ class ContactData extends Component {
 
     orderPlaced = (event) => {
         event.preventDefault(); // To Prevent Page reloading
-        console.log(this.props.ingrs);
-        this.setState({spinner: true});
         let orders = {};
         for(let formElementIdentifier in this.state.orderForm) {
             orders[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
@@ -110,17 +107,9 @@ class ContactData extends Component {
             ingredients: this.props.ingrs,
             price: this.props.fp,
             customer: orders
-        }
-        axios.post('/orders.json', order)
-            .then(response => {
-                console.log(response);
-                this.setState({spinner: false});
-            })
-            .catch(error => {
-                console.log(error)
-                this.setState({spinner: false});
-            })  
-        this.props.history.push('/') 
+        } 
+        console.log('Inside Order placed')
+        this.props.purchaseBurgerStart(order);
     }
 
     checkInputValidity(rules, value) {
@@ -178,7 +167,7 @@ class ContactData extends Component {
             <Button disabled = {!this.state.isFormValid} btnType='Success'>ORDER</Button>
         </form>);
 
-        if(this.state.spinner) {
+        if(this.props.spinner) {
             form = <Spinner />
         }
         
@@ -193,9 +182,16 @@ class ContactData extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingrs: state.ingredients,
-        fp: state.finalPrice
+        ingrs: state.bgrBuilder.ingredients,
+        fp: state.bgrBuilder.finalPrice,
+        spinner: state.order.spinner
     }
 }
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = dispatch => {
+    return {
+        purchaseBurgerStart: (orderData) => dispatch(action.purchaseBurger(orderData)) 
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactData);

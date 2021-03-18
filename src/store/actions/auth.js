@@ -25,7 +25,6 @@ export const authSuccess = (token, userId) => {
 }
 
 export const authFail = (error) => {
-    console.log('error', error);
     return {
         type: actionTypes.AUTH_FAIL,
         error: error
@@ -61,13 +60,10 @@ export const auth = (email, password, isSignup) => {
         }
         axios.post(url, authData)
         .then(response => {
-            console.log(response);
             const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 3600)
             localStorage.setItem('token', response.data.idToken);
             localStorage.setItem('expirationDate', expirationDate);
             localStorage.setItem('userId', response.data.localId);
-            console.log('localStorahe', localStorage);
-            console.log(localStorage.getItem('expirationDate'));
             dispatch(authSuccess(response.data.idToken, response.data.localId))
             dispatch(logout(response.data.expiresIn))
         })
@@ -84,7 +80,6 @@ export const authCheckState = () => {
             const expirationDate = new Date(localStorage.getItem('expirationDate'))
             if(expirationDate > new Date()){
                 dispatch(authSuccess(token, localStorage.getItem('userId')))
-                console.log('new expiration time', (expirationDate.getTime() - new Date().getTime())/1000);
                 dispatch(logout((expirationDate.getTime() - new Date().getTime())/1000))
             } else {
                 dispatch(authLogout());

@@ -16,6 +16,7 @@ class Orders extends Component {
         // let price = this.state.orders.price;
         let orders = <Spinner />
         if(!this.props.loader) {
+            console.log(this.props.orders);
             orders = orders = this.props.orders.map(order => {
                 return <Order
                     key = {order.id}

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../store/actions/index';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import { Redirect } from 'react-router';
+import { checkInputValidity } from '../../shared/utility';
 
 class Auth extends Component {
 
@@ -44,25 +45,9 @@ class Auth extends Component {
     }
 
     componentDidMount() {
-        console.log('building props', this.props.building);
         if(!this.props.building && this.props.redirectPath !== '/') {
-            console.log('dispatching the redirect path to /')
             this.props.setAuthRedirectPath();
         }
-    }
-
-    checkInputValidity(rules, value) {
-        let isValid = true;
-        if(rules.required) {
-            isValid = value !== '' && isValid;
-        }
-        if(rules.minLength) {
-            isValid = isValid && value.length >=rules.minLength;
-        }
-        if(rules.maxLength) {
-            isValid = isValid && value.length <=rules.maxLength;
-        }
-        return isValid;
     }
 
     inputChangeHandler = (event, inputElementIdentifier) => {
@@ -73,7 +58,7 @@ class Auth extends Component {
             ...updatedAuthForm[inputElementIdentifier]
         }
         updatedInputValue.value = event.target.value;
-        updatedInputValue.valid = this.checkInputValidity(updatedInputValue.validation, updatedInputValue.value)
+        updatedInputValue.valid = checkInputValidity(updatedInputValue.validation, updatedInputValue.value)
         updatedInputValue.touched = true;
         updatedAuthForm[inputElementIdentifier] = updatedInputValue;
         let isFormValid = true;

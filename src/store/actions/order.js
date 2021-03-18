@@ -2,7 +2,6 @@ import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
 
 export const purchaseBurgerSuccess = (id, orderData) => {
-    console.log('purchase burger success action creator', id, orderData)
     return {
         type: actionTypes.PURCHASE_BURGER_SUCCESS,
         orderId: id,
@@ -25,11 +24,9 @@ export const purchaseBurgerStart = () => {
 
 export const purchaseBurger = (token, orderData) => {
     return dispatch => {
-        console.log('Inside Purchase burger')
         dispatch(purchaseBurgerStart());
         axios.post('/orders.json?auth=' + token, orderData)
             .then(response => {
-                console.log(response.data);
                 dispatch(purchaseBurgerSuccess(response.data.name, orderData));
             })
             .catch(error => {

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import classes from './ContactData.css';
 import Button from '../../../components/UI/Button/Button';
-import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import { connect } from 'react-redux';
 import * as action from '../../../store/actions/index';
+import { checkInputValidity } from '../../../shared/utility';
 class ContactData extends Component {
 
     state = {
@@ -93,10 +93,6 @@ class ContactData extends Component {
         isFormValid: false
     }
 
-    componentDidMount() {
-        console.log(this.props);
-    }
-
     orderPlaced = (event) => {
         event.preventDefault(); // To Prevent Page reloading
         let orders = {};
@@ -109,22 +105,7 @@ class ContactData extends Component {
             customer: orders,
             userId: this.props.userId
         } 
-        console.log('Inside Order placed')
         this.props.purchaseBurgerStart(this.props.token, order);
-    }
-
-    checkInputValidity(rules, value) {
-        let isValid = true;
-        if(rules.required) {
-            isValid = value !== '' && isValid;
-        }
-        if(rules.minLength) {
-            isValid = isValid && value.length >=rules.minLength;
-        }
-        if(rules.maxLength) {
-            isValid = isValid && value.length <=rules.maxLength;
-        }
-        return isValid;
     }
 
     inputChangeHandler = (event, inputElementIdentifier) => {
@@ -135,7 +116,7 @@ class ContactData extends Component {
             ...updatedOrderForm[inputElementIdentifier]
         }
         updatedInputValue.value = event.target.value;
-        updatedInputValue.valid = this.checkInputValidity(updatedInputValue.validation, updatedInputValue.value)
+        updatedInputValue.valid = checkInputValidity(updatedInputValue.validation, updatedInputValue.value)
         updatedInputValue.touched = true;
         updatedOrderForm[inputElementIdentifier] = updatedInputValue;
         let isFormValid = true;

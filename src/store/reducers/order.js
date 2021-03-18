@@ -15,13 +15,11 @@ const reducer = (state = initialState, action) => {
                 purchased: false
             }
         case actionTypes.PURCHASE_BURGER_START:
-                console.log('inside purchase burger start');
             return {
                 ...state,
                 spinner: true
             }
         case actionTypes.PURCHASE_BURGER_SUCCESS:
-                console.log('inside purchase burger success');
             let newOrder = {
                 ...action.orderData,
                 id: action.orderId
@@ -52,9 +50,10 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 orderLoader: false
-            }    
+            } 
+        default:
+            return state;        
     }
-    return state;
 }
 
 export default reducer;

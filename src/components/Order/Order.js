@@ -9,7 +9,6 @@ const order = (props) => {
             count: props.ingredients[ingredientName]
         });
     }
-    console.log('ingredient', ingredients)
     let ingredient = ingredients.map(ingredient => {
         return <span style={{
             textTransform: 'capitalize',

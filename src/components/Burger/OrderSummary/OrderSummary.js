@@ -6,10 +6,6 @@ import Button from '../../UI/Button/Button';
 // This component can be a Functional component(Overrided the componentWillUpdate method to improve performance)
 class OrderSummary extends Component {
 
-    componentWillUpdate(){
-        console.log('[OrderSummary.js]', 'Component rendered');
-    }
-
     render() {
         const ingredientSummary = Object.keys(this.props.ingredients)
         .map(igKey => {

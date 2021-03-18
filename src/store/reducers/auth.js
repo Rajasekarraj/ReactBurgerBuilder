@@ -39,9 +39,10 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 redirectPath: action.redirectPath
-            }       
+            }   
+        default:
+            return state;        
     }
-    return state;
 }
 
 export default reducer;

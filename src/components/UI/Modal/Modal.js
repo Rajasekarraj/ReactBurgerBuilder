@@ -9,10 +9,6 @@ class Modal extends Component {
         return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
     }
 
-    componentWillMount(){
-        console.log('[Modal.js]', 'Will Update')
-    }
-
     render() {
         return(
             <Aux>

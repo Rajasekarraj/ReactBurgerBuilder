@@ -106,10 +106,11 @@ class ContactData extends Component {
         const order = {
             ingredients: this.props.ingrs,
             price: this.props.fp,
-            customer: orders
+            customer: orders,
+            userId: this.props.userId
         } 
         console.log('Inside Order placed')
-        this.props.purchaseBurgerStart(order);
+        this.props.purchaseBurgerStart(this.props.token, order);
     }
 
     checkInputValidity(rules, value) {
@@ -184,13 +185,15 @@ const mapStateToProps = state => {
     return {
         ingrs: state.bgrBuilder.ingredients,
         fp: state.bgrBuilder.finalPrice,
-        spinner: state.order.spinner
+        spinner: state.order.spinner,
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        purchaseBurgerStart: (orderData) => dispatch(action.purchaseBurger(orderData)) 
+        purchaseBurgerStart: (token, orderData) => dispatch(action.purchaseBurger(token, orderData)) 
     }
 }
 
